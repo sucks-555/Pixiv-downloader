@@ -4,7 +4,7 @@
 ```js
 if (location.host === "www.pixiv.net") {
 
-  async function getPixiv() {
+  async function GETPixiv() {
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
     try {
@@ -17,21 +17,14 @@ if (location.host === "www.pixiv.net") {
         const figure = document.querySelectorAll("figure")[0];
         const image = figure.querySelectorAll("img");
         for (const img of image) {
-          try {
-            const pathArray = img.src.split('/');
-            const lastPath = pathArray[pathArray.length - 1];
-            const parts = lastPath.split('.');
-            const fileName = parts[0] || "file_"
-            console.log(fileName)
-            console.log(parts)
-            if (parts.length > 1) {
-              const extension = parts[parts.length - 1];
-              filelist.push({ url: img.src, fileName: fileName, extension: extension });
-            } else {
-              filelist.push({ url: img.src, fileName: fileName, extension: 'jpg' });
-            }
-          } catch {
-            filelist.push({ url: img.src, fileName: "File_", extension: 'jpg' });
+          const pathArray = img.src.split('/');
+          const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
+          const fileName = parts[0]
+          if (parts.length > 1) {
+            const extension = parts[parts.length - 1];
+            filelist.push({ url: img.src, fileName: fileName, extension: extension });
+          } else {
+            filelist.push({ url: img.src, fileName: fileName, extension: 'jpg' });
           }
         }
         resolve();
@@ -40,6 +33,37 @@ if (location.host === "www.pixiv.net") {
     console.log(filelist)
     conversion(filelist);
   }
+
+  async function fullsizeGETpixiv() {
+    const filelist = [];
+    const button = document.querySelector(".sc-emr523-2");
+    button && button.click();
+    await new Promise(resolve => {
+      setTimeout(async () => {
+        const figure = document.querySelectorAll("figure")[0];
+        const a = figure.querySelectorAll("a");
+        for (let i = 0; i < a.length; i++) {
+          console.log(i);
+          a[i].click();
+          await new Promise(innerResolve => setTimeout(innerResolve, 150));
+          const presentation = document.querySelector(`.sc-1pkrz0g-1`);
+          const image = presentation.querySelector("img");
+          const pathArray = image.src.split('/');
+          const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
+          const fileName = parts[0];
+          const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
+          filelist.push({ url: image.src, fileName: fileName, extension: extension });
+          await new Promise(innerResolve => setTimeout(innerResolve, 150));
+          const nextButton = document.querySelector("button.sc-691snt-1.sc-691snt-3.cdYVyZ.bThEqM");
+          nextButton && nextButton.click();
+        }
+        resolve();
+      }, 500);
+    });
+
+    conversion(filelist)
+  }
+
   function downloadFile(url, fileName, fileExtension) {
     fetch(url)
       .then(response => {
@@ -74,25 +98,27 @@ if (location.host === "www.pixiv.net") {
   let offsetX, offsetY;
   let longPressTimeout;
   let customContextMenu = null;
-  button.innerHTML = 'Get';
+  button.innerHTML = 'GET';
   button.style.cssText = 'background:rgba(255,255,255,.2);border:none;color:#000;position: fixed;z-index:5500;width:45px;height:33px;border-radius:7px;top:10px;left:5px;cursor:pointer;';
   button.addEventListener("mousedown", handleMouseDown);
   button.addEventListener("mouseup", handleMouseUp);
   button.addEventListener("mousemove", handleMouseMove);
   button.addEventListener("touchstart", handleTouchStart);
   button.addEventListener("touchend", handleTouchEnd);
-  button.addEventListener('click', () => getPixiv());
+  button.addEventListener('click', () => GETPixiv());
   button.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     if (!customContextMenu) {
       customContextMenu = document.createElement('ul');
-      customContextMenu.innerHTML = '<li><button id="hide_btn"><h2 style="font-size:13px;">非表示</h2></button></li>';
+      customContextMenu.innerHTML = '<li><button id="hide_btn"><h2 style="font-size:13px;">非表示</h2></button><button id="full_btn"><h2 style="font-size:13px;">フルサイズ</h2></button></li>';
       customContextMenu.style.cssText = 'position: fixed;z-index:5500;border-radius:5px;width:auto;height:auto;list-style:none;';
       document.body.appendChild(customContextMenu);
       const hide_btn = document.getElementById('hide_btn');
-      if (hide_btn) {
-        hide_btn.addEventListener('click', () => hideButton());
-      }
+      const full_btn = document.getElementById('full_btn');
+      hide_btn && hide_btn.addEventListener('click', () => hideButton());
+      full_btn && full_btn.addEventListener('click', () => fullsizeGETpixiv());
+
+
     }
     const x = e.clientX;
     const y = e.clientY;
