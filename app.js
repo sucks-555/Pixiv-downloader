@@ -1,6 +1,6 @@
 if (location.host === "www.pixiv.net") {
 
-  async function GETPixiv() {
+  async function GETpixiv() {
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
     try {
@@ -83,90 +83,22 @@ if (location.host === "www.pixiv.net") {
     }
   }
 
-  const button = document.createElement('button');
-  let isDragging = false;
-  let isLongPressing = false;
-  let offsetX, offsetY;
-  let longPressTimeout;
-  let customContextMenu = null;
-  button.innerHTML = 'GET';
-  button.style.cssText = 'background:rgba(255,255,255,.2);border:none;color:#000;position: fixed;z-index:5500;width:45px;height:33px;border-radius:7px;top:10px;left:5px;cursor:pointer;';
-  button.addEventListener("mousedown", handleMouseDown);
-  button.addEventListener("mouseup", handleMouseUp);
-  button.addEventListener("mousemove", handleMouseMove);
-  button.addEventListener("touchstart", handleTouchStart);
-  button.addEventListener("touchend", handleTouchEnd);
-  button.addEventListener('click', () => GETPixiv());
-  button.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    if (!customContextMenu) {
-      customContextMenu = document.createElement('ul');
-      customContextMenu.innerHTML = '<li><button id="hide_btn"><h2 style="font-size:13px;">非表示</h2></button><button id="full_btn"><h2 style="font-size:13px;">フルサイズ</h2></button></li>';
-      customContextMenu.style.cssText = 'position: fixed;z-index:5500;border-radius:5px;width:auto;height:auto;list-style:none;';
-      document.body.appendChild(customContextMenu);
-      const hide_btn = document.getElementById('hide_btn');
-      const full_btn = document.getElementById('full_btn');
-      hide_btn && hide_btn.addEventListener('click', () => hideButton());
-      full_btn && full_btn.addEventListener('click', () => fullsizeGETpixiv());
-
-
-    }
-    const x = e.clientX;
-    const y = e.clientY;
-    customContextMenu.style.left = `${x}px`;
-    customContextMenu.style.top = `${y}px`;
-    customContextMenu.style.display = 'block';
-    customContextMenu.addEventListener('click', () => {
-      customContextMenu.style.display = 'none';
-    });
-  });
-  document.body.appendChild(button);
-  document.addEventListener('click', () => {
-    if (customContextMenu) {
-      customContextMenu.style.display = 'none';
-    }
-  });
-  function handleMouseDown(e) {
-    e.preventDefault();
-    isDragging = true;
-    offsetX = e.clientX - button.getBoundingClientRect().left;
-    offsetY = e.clientY - button.getBoundingClientRect().top;
-    startLongPressTimer();
-  }
-  function handleMouseUp() {
-    isDragging = false;
-    stopLongPressTimer();
-  }
-  function handleMouseMove(e) {
-    if (isDragging) {
-      const x = e.clientX - offsetX;
-      const y = e.clientY - offsetY;
-      button.style.left = `${x}px`;
-      button.style.top = `${y}px`;
-    }
-  }
-  function handleTouchStart(e) {
-    e.preventDefault();
-    isDragging = true;
-    offsetX = e.touches[0].clientX - button.getBoundingClientRect().left;
-    offsetY = e.touches[0].clientY - button.getBoundingClientRect().top;
-    startLongPressTimer();
-  }
-  function handleTouchEnd() {
-    isDragging = false;
-    stopLongPressTimer();
-  }
-  function startLongPressTimer() {
-    isLongPressing = false;
-    longPressTimeout = setTimeout(() => {
-      isLongPressing = true;
-    }, 1000);
-  }
-  function stopLongPressTimer() {
-    clearTimeout(longPressTimeout);
-  }
-  function hideButton() {
-    button.style.display = 'none';
+  function artworks() {
+    (location.pathname.startsWith("/artworks/") && document.readyState === "complete") ? addbutton() : setTimeout(artworks, 1000);
   }
 
+  function addbutton() {
+    const section = document.querySelector("section div.sc-ye57th-1.lbzRfC section");
+    function createButton(label, clickHandler) {
+      const button = document.createElement("button");
+      button.classList.add("px-button");
+      button.innerHTML = `<span>${label}</span>`;
+      button.addEventListener("click", clickHandler);
+      return button;
+    }
+    section.appendChild(createButton("保存", GETpixiv));
+    section.appendChild(createButton("フルサイズ保存", fullsizeGETpixiv));
+  }
+
+  artworks();
 }
