@@ -29,7 +29,7 @@ if (location.host === "www.pixiv.net") {
     conversion(filelist);
   }
 
-  async function fullsizeGETpixiv() {
+  async function FullGETpixiv() {
     const wait = 150;
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
@@ -89,15 +89,15 @@ if (location.host === "www.pixiv.net") {
 
   function addbutton() {
     const section = document.querySelector("section div.sc-ye57th-1.lbzRfC section");
-    function createButton(label, clickHandler) {
+    function createButton(label, action) {
       const button = document.createElement("button");
       button.classList.add("px-button");
       button.innerHTML = `<span>${label}</span>`;
-      button.addEventListener("click", clickHandler);
+      button.addEventListener("click", action);
       return button;
     }
     section.appendChild(createButton("保存", GETpixiv));
-    section.appendChild(createButton("フルサイズ保存", fullsizeGETpixiv));
+    section.appendChild(createButton("フルサイズ保存", FullGETpixiv));
   }
 
   artworks();
