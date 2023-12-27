@@ -6,7 +6,7 @@
 ```js
 if (location.host === "www.pixiv.net") {
 
-  async function GETPixiv() {
+  async function GETpixiv() {
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
     try {
@@ -89,5 +89,23 @@ if (location.host === "www.pixiv.net") {
     }
   }
 
+  function artworks() {
+    (location.pathname.startsWith("/artworks/") && document.readyState === "complete") ? addbutton() : setTimeout(artworks, 1000);
+  }
+
+  function addbutton() {
+    const section = document.querySelector("section div.sc-ye57th-1.lbzRfC section");
+    function createButton(label, clickHandler) {
+      const button = document.createElement("button");
+      button.classList.add("px-button");
+      button.innerHTML = `<span>${label}</span>`;
+      button.addEventListener("click", clickHandler);
+      return button;
+    }
+    section.appendChild(createButton("保存", GETpixiv));
+    section.appendChild(createButton("フルサイズ保存", fullsizeGETpixiv));
+  }
+
+  artworks();
 }
 ```
