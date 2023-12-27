@@ -26,7 +26,6 @@ if (location.host === "www.pixiv.net") {
         resolve();
       }, 1000);
     });
-    console.log(filelist)
     conversion(filelist);
   }
 
@@ -56,12 +55,12 @@ if (location.host === "www.pixiv.net") {
         resolve();
       }, 500);
     });
-
     conversion(filelist)
   }
-
-  function downloadFile(url, fileName, fileExtension) {
-    fetch(url)
+  function conversion(files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      fetch(file.url)
       .then(response => {
         if (response.ok) {
           return response.blob();
@@ -71,7 +70,7 @@ if (location.host === "www.pixiv.net") {
         const objectURL = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = objectURL;
-        link.download = `${fileName}.${fileExtension}`;
+        link.download = `${file.fileName}.${file.extension}`;
         document.body.appendChild(link);
         link.click();
         window.URL.revokeObjectURL(objectURL);
@@ -80,11 +79,6 @@ if (location.host === "www.pixiv.net") {
       .catch(error => {
         console.error('error:',error);
       });
-  }
-  function conversion(files) {
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      downloadFile(file.url, file.fileName, file.extension);
     }
   }
 
