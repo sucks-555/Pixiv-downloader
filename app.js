@@ -14,7 +14,7 @@ if (location.host === "www.pixiv.net") {
         const image = figure.querySelectorAll("img");
         for (const img of image) {
           const pathArray = img.src.split('/');
-          const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
+          const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
           const fileName = parts[0]
           const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
           filelist.push({ url: image.src, fileName: fileName, extension: extension });
@@ -41,7 +41,7 @@ if (location.host === "www.pixiv.net") {
           const presentation = document.querySelector(`.sc-1pkrz0g-1`);
           const image = presentation.querySelector("img");
           const pathArray = image.src.split('/');
-          const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
+          const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
           const fileName = parts[0];
           const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
           filelist.push({ url: image.src, fileName: fileName, extension: extension });
