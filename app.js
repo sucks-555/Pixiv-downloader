@@ -16,12 +16,8 @@ if (location.host === "www.pixiv.net") {
           const pathArray = img.src.split('/');
           const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
           const fileName = parts[0]
-          if (parts.length > 1) {
-            const extension = parts[parts.length - 1];
-            filelist.push({ url: img.src, fileName: fileName, extension: extension });
-          } else {
-            filelist.push({ url: img.src, fileName: fileName, extension: 'jpg' });
-          }
+          const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
+          filelist.push({ url: image.src, fileName: fileName, extension: extension });
         }
         resolve();
       }, 1000);
