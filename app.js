@@ -30,6 +30,7 @@ if (location.host === "www.pixiv.net") {
   }
 
   async function fullsizeGETpixiv() {
+    const wait = 150;
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
     button && button.click();
@@ -40,7 +41,7 @@ if (location.host === "www.pixiv.net") {
         for (let i = 0; i < a.length; i++) {
           console.log(i);
           a[i].click();
-          await new Promise(innerResolve => setTimeout(innerResolve, 150));
+          await new Promise(innerResolve => setTimeout(innerResolve, wait));
           const presentation = document.querySelector(`.sc-1pkrz0g-1`);
           const image = presentation.querySelector("img");
           const pathArray = image.src.split('/');
@@ -48,12 +49,12 @@ if (location.host === "www.pixiv.net") {
           const fileName = parts[0];
           const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
           filelist.push({ url: image.src, fileName: fileName, extension: extension });
-          await new Promise(innerResolve => setTimeout(innerResolve, 150));
+          await new Promise(innerResolve => setTimeout(innerResolve, wait));
           const nextButton = document.querySelector("button.sc-691snt-1.sc-691snt-3.cdYVyZ.bThEqM");
           nextButton && nextButton.click();
         }
         resolve();
-      }, 500);
+      }, wait);
     });
     conversion(filelist)
   }
