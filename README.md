@@ -23,7 +23,7 @@ if (location.host === "www.pixiv.net") {
           const parts = pathArray[pathArray.length - 1].split('.') || ["file_"];
           const fileName = parts[0]
           const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
-          filelist.push({ url: image.src, fileName: fileName, extension: extension });
+          filelist.push({ url: img.src, fileName: fileName, extension: extension });
         }
         resolve();
       }, 1000);
