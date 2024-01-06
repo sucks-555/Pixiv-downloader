@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "pixiv downloader",
+  "description": "You can batch download pixiv works, select full size download or master size download",
+  "version": "1.0.1",
+  "content_scripts": [
+    {
+      "js": ["contents.js"],
+      "matches": ["https://www.pixiv.net/*"]
+    }
+  ]
+}
