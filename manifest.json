@@ -5,7 +5,7 @@
   "version": "1.0.1",
   "content_scripts": [
     {
-      "js": ["contents.js"],
+      "js": ["content.js"],
       "matches": ["https://www.pixiv.net/*"]
     }
   ]
