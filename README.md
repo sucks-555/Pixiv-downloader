@@ -7,6 +7,13 @@
 ```js
 if (location.host === "www.pixiv.net") {
 
+  function processImage(img, i) {
+    const pathArray = img.src.split('/');
+    const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
+    const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
+    return { url: img.src, fileName: parts[0], extension: extension };
+  }
+
   async function GETpixiv() {
     const filelist = [];
     const button = document.querySelector(".sc-emr523-2");
@@ -16,26 +23,20 @@ if (location.host === "www.pixiv.net") {
         const exception = document.querySelector(".sc-1qlsbpb-0");
         if (exception) {
           const lane = exception.querySelector('.sc-1oz5uvo-1').querySelectorAll('img');
-          for (const img of lane) {
-            const pathArray = img.src.split('/');
-            const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
-            const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
-            filelist.push({ url: img.src, fileName: parts[0], extension: extension });
+          for (let i = 0; i < lane.length; i++) {
+            filelist.push(processImage(lane[i], i));
           }
         } else {
           const figure = document.querySelectorAll("figure")[0];
           const image = figure.querySelectorAll("img");
-          for (const img of image) {
-            const pathArray = img.src.split('/');
-            const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
-            const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
-            filelist.push({ url: img.src, fileName: parts[0], extension: extension });
+          for (let i = 0; i < image.length; i++) {
+            filelist.push(processImage(image[i], i));
           }
         }
         resolve();
       }, 1000);
     });
-    conversion(filelist);
+    download(filelist);
   }
 
   async function FullGETpixiv() {
@@ -54,13 +55,10 @@ if (location.host === "www.pixiv.net") {
           for (let i = 0; i < count; i ++) {
             await delay(wait);
             const origin = document.querySelector(".sc-tmsb78-0");
-            const image = origin.querySelector("img")
-            const pathArray = image.src.split('/');
-            const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
-            const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
-            filelist.push({ url: image.src, fileName: parts[0], extension: extension });
+            const img = origin.querySelector("img")
+            filelist.push(processImage(img, i));
             await delay(wait);
-            image && image.scrollIntoView({
+            img && img.scrollIntoView({
               behavior: 'instant',
               block: 'end'
             });
@@ -69,20 +67,15 @@ if (location.host === "www.pixiv.net") {
               nextButton && nextButton.click();
             }, 0);
           }
-
         } else {
-
           const figure = document.querySelectorAll("figure")[0];
           const a = figure.querySelectorAll("a");
           for (let i = 0; i < a.length; i++) {
             a[i].click();
             await delay(wait);
             const presentation = document.querySelector(`.sc-1pkrz0g-1`);
-            const image = presentation.querySelector("img");
-            const pathArray = image.src.split('/');
-            const parts = pathArray[pathArray.length - 1].split('.') || [`${location.pathname.split("/artworks/")[1]}_p${i}`];
-            const extension = parts.length > 1 ? parts[parts.length - 1] : 'jpg';
-            filelist.push({ url: image.src, fileName: parts[0], extension: extension });
+            const img = presentation.querySelector("img");
+            filelist.push(processImage(img, i));
             await delay(wait);
             const nextButton = document.querySelector("button.sc-691snt-1.sc-691snt-3.cdYVyZ.bThEqM");
             nextButton && nextButton.click();
@@ -92,9 +85,9 @@ if (location.host === "www.pixiv.net") {
         resolve();
       }, 1000);
     });
-    conversion(filelist)
+    download(filelist)
   }
-  function conversion(files) {
+  function download(files) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       fetch(file.url)
