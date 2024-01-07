@@ -87,8 +87,9 @@ if (location.host === "www.pixiv.net") {
     });
     download(filelist)
   }
-  function download(files) {
+  async function download(files) {
     for (let i = 0; i < files.length; i++) {
+      await delay(300);
       const file = files[i];
       fetch(file.url)
       .then(response => (response.ok && response.blob()))
